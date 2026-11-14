@@ -1,4 +1,4 @@
-import os, json, time, random, urllib.request, urllib.parse
+import os, json, time, random, urllib.request, urllib.parse, subprocess
 
 UA='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
 CK='hyqv'
@@ -22,6 +22,16 @@ def load(path, default):
 
 def save(path, obj):
     json.dump(obj, open(path,'w'), ensure_ascii=False, separators=(',',':'))
+
+def git_push(msg):
+    if os.environ.get('GIT_COMMIT') != '1': return
+    run=lambda c: subprocess.run(c, shell=True, capture_output=True)
+    run('git config user.name phbox-bot')
+    run('git config user.email bot@users.noreply.github.com')
+    run('git add data.json progress.json')
+    run(f'git commit -m "{msg}"')
+    r=run('git pull --rebase origin main && git push')
+    print('push', r.returncode, flush=True)
 
 req=0
 def get(path, params):
@@ -104,6 +114,7 @@ def main():
                         data['items'][key]=items
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
+                    if len(done)%50==0: git_push(f'partial {len(done)}')
             for f in TVFORMS:
                 for a in AREAS:
                     key=f'tv_all|{f}|{a}'
@@ -114,10 +125,11 @@ def main():
                         data['items'][key]=items
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
+                    if len(done)%50==0: git_push(f'partial {len(done)}')
     except SystemExit:
         print('stopped at MAXREQ')
     finally:
-        save(DATA,data); save(PROG,prog)
+        save(DATA,data); save(PROG,prog); git_push('final')
         print('items', sum(len(v) for v in data['items'].values()), 'combos', len(data['items']), 'done', len(done))
 
 if __name__=='__main__': main()
