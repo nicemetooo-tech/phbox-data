@@ -29,6 +29,7 @@ jobs:
           GAP: ${{ github.event.inputs.gap || '7' }}
           MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
           PAGES: ${{ github.event.inputs.pages || '2' }}
+          MAXSECONDS: '2700'
         run: python pool_gh.py
       - name: commit
         run: |
