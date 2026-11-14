@@ -5,6 +5,8 @@ CK='hyqv'
 GAP=float(os.environ.get('GAP','7'))
 MAXREQ=int(os.environ.get('MAXREQ','150'))
 PAGES=int(os.environ.get('PAGES','2'))
+MAXSECONDS=int(os.environ.get('MAXSECONDS','2700'))
+START=time.time()
 DATA='data.json'; PROG='pool_progress.json'
 
 TYPES=['喜剧','爱情','动作','科幻','动画','悬疑','犯罪','惊悚','冒险','音乐','历史','奇幻','恐怖','战争','传记','歌舞','武侠','灾难','西部','纪录片','短片']
@@ -27,6 +29,7 @@ req=0
 def get(path, params):
     global req
     if req>=MAXREQ: raise SystemExit('limit')
+    if time.time()-START > MAXSECONDS: raise SystemExit('time')
     url=f'https://m.douban.com/rexxar/api/v2/{path}?'+urllib.parse.urlencode(params)
     r=urllib.request.Request(url, headers={'User-Agent':UA,'Referer':'https://m.douban.com/'})
     wait=60
@@ -161,7 +164,7 @@ def main():
         for p in (PLATFORMS if do_pool else []):
             job(f'tv|platform|{p}|p{PAGES}', lambda p=p: rec('tv',f',{p}',{'类型':'','地区':''},PAGES))
     except SystemExit:
-        print('stopped at MAXREQ')
+        print('stopped early')
     finally:
         save(DATA,data); save('pool_progress.json',prog); save('fail.json',fail); git_push('pool final')
         all_keys=[]
