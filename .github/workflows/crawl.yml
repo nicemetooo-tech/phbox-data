@@ -19,7 +19,7 @@ jobs:
         with: {python-version: '3.11'}
       - name: run
         env:
-          SCOPE: ${{ github.event.inputs.scope || 'matrix' }}
+          SCOPE: ${{ github.event.inputs.scope || 'hot' }}
           GAP: ${{ github.event.inputs.gap || '10' }}
           MAXREQ: ${{ github.event.inputs.maxreq || '300' }}
         run: python crawl_gh.py
