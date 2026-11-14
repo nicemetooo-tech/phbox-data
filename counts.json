@@ -1,0 +1,470 @@
+{
+"movie|genre|喜剧": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|爱情": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|动作": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|科幻": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|动画": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|悬疑": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|犯罪": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|惊悚": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|冒险": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|音乐": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|历史": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|奇幻": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|恐怖": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|战争": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|传记": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|歌舞": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|武侠": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|灾难": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|西部": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|纪录片": {
+"total": 501,
+"at": 1794699354
+},
+"movie|genre|短片": {
+"total": 501,
+"at": 1794699354
+},
+"movie|area|华语": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|欧美": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|中国大陆": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|美国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|日本": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|韩国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|中国香港": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|中国台湾": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|英国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|法国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|德国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|意大利": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|西班牙": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|印度": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|泰国": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|俄罗斯": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|加拿大": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|澳大利亚": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|爱尔兰": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|瑞典": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|巴西": {
+"total": 500,
+"at": 1794699354
+},
+"movie|area|丹麦": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2020年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2026": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2025": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2024": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2023": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2022": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2021": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2020": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2019": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2010年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|2000年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|90年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|80年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|70年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|60年代": {
+"total": 500,
+"at": 1794699354
+},
+"movie|year|更早": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|喜剧": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|爱情": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|悬疑": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|动画": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|武侠": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|古装": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|家庭": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|犯罪": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|科幻": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|恐怖": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|历史": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|战争": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|动作": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|冒险": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|传记": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|剧情": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|奇幻": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|惊悚": {
+"total": 500,
+"at": 1794699354
+},
+"tv|genre|灾难": {
+"total": 120,
+"at": 1794699354
+},
+"tv|genre|歌舞": {
+"total": 369,
+"at": 1794699354
+},
+"tv|genre|音乐": {
+"total": 500,
+"at": 1794699354
+},
+"tv|show|真人秀": {
+"total": 500,
+"at": 1794699354
+},
+"tv|show|脱口秀": {
+"total": 500,
+"at": 1794699354
+},
+"tv|show|音乐": {
+"total": 500,
+"at": 1794699354
+},
+"tv|show|歌舞": {
+"total": 428,
+"at": 1794699354
+},
+"tv|area|华语": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|欧美": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|中国大陆": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|美国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|日本": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|韩国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|中国香港": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|中国台湾": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|英国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|法国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|德国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|意大利": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|西班牙": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|印度": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|泰国": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|俄罗斯": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|加拿大": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|澳大利亚": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|爱尔兰": {
+"total": 326,
+"at": 1794699354
+},
+"tv|area|瑞典": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|巴西": {
+"total": 500,
+"at": 1794699354
+},
+"tv|area|丹麦": {
+"total": 492,
+"at": 1794699354
+},
+"tv|platform|腾讯视频": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|爱奇艺": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|优酷": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|湖南卫视": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|Netflix": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|HBO": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|BBC": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|NHK": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|CBS": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|NBC": {
+"total": 500,
+"at": 1794699354
+},
+"tv|platform|tvN": {
+"total": 500,
+"at": 1794699354
+}
+}
