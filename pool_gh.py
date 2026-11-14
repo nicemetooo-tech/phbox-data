@@ -102,9 +102,12 @@ def main():
           {'key':'sort','name':'排序','values':['近期热度','首映时间','高分优先']}]},
       {'id':'tv_all','name':'全部电视剧','filters':[
           {'key':'type','name':'类型','values':['全部','电视剧','综艺']},
-          {'key':'genre','name':'题材','values':['全部']+TVGENRES},
+          {'key':'genre','name':'电视剧形式','values':['全部']+TVGENRES},
+          {'key':'show','name':'综艺形式','values':['全部']+SHOWGENRES},
           {'key':'area','name':'地区','values':['全部']+AREAS},
-          {'key':'platform','name':'平台','values':['全部']+PLATFORMS}]},
+          {'key':'year','name':'年代','values':['全部']+YEARS},
+          {'key':'platform','name':'平台','values':['全部']+PLATFORMS},
+          {'key':'sort','name':'排序','values':['综合排序','近期热度','首播时间','高分优先']}]},
     ]
     pools=data.setdefault('pools',{})
     pools.setdefault('movie_all',[]); pools.setdefault('tv_all',[])
@@ -152,6 +155,8 @@ def main():
             job(f'tv|show|{g}', lambda g=g: rec('tv',f'{g},综艺',{'类型':g,'形式':'综艺'},2))
         for a in (AREAS if do_pool else []):
             job(f'tv|area|{a}', lambda a=a: rec('tv',f',{a}',{'类型':'','地区':a},2))
+        for y in (YEARS if do_pool else []):
+            job(f'tv|year|{y}', lambda y=y: rec('tv',f',{y}',{'类型':'','地区':''},2))
         for p in (PLATFORMS if do_pool else []):
             job(f'tv|platform|{p}', lambda p=p: rec('tv',f',{p}',{'类型':'','地区':''},2))
     except SystemExit:
