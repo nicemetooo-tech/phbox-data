@@ -2,8 +2,9 @@ import os, json, time, random, urllib.request, urllib.parse, subprocess
 
 UA='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
 CK='hyqv'
-GAP=float(os.environ.get('GAP','6'))
-MAXREQ=int(os.environ.get('MAXREQ','200'))
+GAP=float(os.environ.get('GAP','7'))
+MAXREQ=int(os.environ.get('MAXREQ','150'))
+PAGES=int(os.environ.get('PAGES','2'))
 DATA='data.json'; PROG='pool_progress.json'
 
 TYPES=['喜剧','爱情','动作','科幻','动画','悬疑','犯罪','惊悚','冒险','音乐','历史','奇幻','恐怖','战争','传记','歌舞','武侠','灾难','西部','纪录片','短片']
@@ -121,7 +122,7 @@ def main():
         merge(mv,items) if key.startswith('movie') else merge(tv,items)
         fail.pop(key,None); done[key]=int(time.time())
         save(DATA,data); save('pool_progress.json',prog)
-        if len(done)%40==0: git_push(f'pool {len(done)}')
+        if len(done)%20==0: git_push(f'pool {len(done)}')
 
     today=time.strftime('%Y-%m-%d')
     SCOPE=os.environ.get('SCOPE','pool')
@@ -144,21 +145,21 @@ def main():
 
         data['hot_date']=today
         for g in (TYPES if do_pool else []):
-            job(f'movie|genre|{g}', lambda g=g: rec('movie',g,{'类型':g,'地区':''},2))
+            job(f'movie|genre|{g}|p{PAGES}', lambda g=g: rec('movie',g,{'类型':g,'地区':''},PAGES))
         for a in (AREAS if do_pool else []):
-            job(f'movie|area|{a}', lambda a=a: rec('movie',a,{'类型':'','地区':a},2))
+            job(f'movie|area|{a}|p{PAGES}', lambda a=a: rec('movie',a,{'类型':'','地区':a},PAGES))
         for y in (YEARS if do_pool else []):
-            job(f'movie|year|{y}', lambda y=y: rec('movie',y,{'类型':'','地区':''},2))
+            job(f'movie|year|{y}|p{PAGES}', lambda y=y: rec('movie',y,{'类型':'','地区':''},PAGES))
         for g in (TVGENRES if do_pool else []):
-            job(f'tv|genre|{g}', lambda g=g: rec('tv',f'{g},电视剧',{'类型':g,'形式':'电视剧'},2))
+            job(f'tv|genre|{g}|p{PAGES}', lambda g=g: rec('tv',f'{g},电视剧',{'类型':g,'形式':'电视剧'},PAGES))
         for g in (SHOWGENRES if do_pool else []):
-            job(f'tv|show|{g}', lambda g=g: rec('tv',f'{g},综艺',{'类型':g,'形式':'综艺'},2))
+            job(f'tv|show|{g}|p{PAGES}', lambda g=g: rec('tv',f'{g},综艺',{'类型':g,'形式':'综艺'},PAGES))
         for a in (AREAS if do_pool else []):
-            job(f'tv|area|{a}', lambda a=a: rec('tv',f',{a}',{'类型':'','地区':a},2))
+            job(f'tv|area|{a}|p{PAGES}', lambda a=a: rec('tv',f',{a}',{'类型':'','地区':a},PAGES))
         for y in (YEARS if do_pool else []):
-            job(f'tv|year|{y}', lambda y=y: rec('tv',f',{y}',{'类型':'','地区':''},2))
+            job(f'tv|year|{y}|p{PAGES}', lambda y=y: rec('tv',f',{y}',{'类型':'','地区':''},PAGES))
         for p in (PLATFORMS if do_pool else []):
-            job(f'tv|platform|{p}', lambda p=p: rec('tv',f',{p}',{'类型':'','地区':''},2))
+            job(f'tv|platform|{p}|p{PAGES}', lambda p=p: rec('tv',f',{p}',{'类型':'','地区':''},PAGES))
     except SystemExit:
         print('stopped at MAXREQ')
     finally:
