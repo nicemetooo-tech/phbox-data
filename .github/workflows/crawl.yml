@@ -4,7 +4,7 @@ on:
     inputs:
       scope: {description: 'hot 或 matrix', required: true, default: 'hot'}
       gap: {description: '请求间隔秒', required: false, default: '10'}
-      maxreq: {description: '每次最大请求数', required: false, default: '300'}
+      maxreq: {description: '每次最大请求数', required: false, default: '150'}
   schedule:
     - cron: '10 * * * *'
 permissions:
@@ -12,16 +12,17 @@ permissions:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 80
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - name: run
         env:
+          GIT_COMMIT: '1'
           SCOPE: ${{ github.event.inputs.scope || 'hot' }}
           GAP: ${{ github.event.inputs.gap || '10' }}
-          MAXREQ: ${{ github.event.inputs.maxreq || '300' }}
+          MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
         run: python crawl_gh.py
       - name: commit
         run: |
