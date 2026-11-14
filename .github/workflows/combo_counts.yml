@@ -1,0 +1,20 @@
+name: combo_counts
+on:
+  workflow_dispatch:
+    inputs:
+      gap: {description: '间隔秒', required: false, default: '5'}
+permissions:
+  contents: write
+jobs:
+  combo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: run
+        env:
+          GIT_COMMIT: '1'
+          GAP: ${{ github.event.inputs.gap || '5' }}
+        run: python combo_counts.py
