@@ -9,6 +9,7 @@ on:
     - cron: '10 * * * *'
 permissions:
   contents: write
+  actions: write
 jobs:
   crawl:
     runs-on: ubuntu-latest
@@ -28,6 +29,17 @@ jobs:
         run: |
           git config user.name "phbox-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data.json progress.json fail.json || true
+          git add data.json progress.json fail.json remaining.txt || true
           git commit -m "update $(date -u +%FT%TZ)" || echo none
           git push
+
+      - name: chain next batch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          n=$(cat remaining.txt 2>/dev/null || echo 0)
+          echo "remaining=$n"
+          if [ "$n" -gt 0 ]; then
+            curl -s -X POST               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches               -d '{"ref":"main","inputs":{"scope":"matrix","gap":"10","maxreq":"150"}}'
+            echo dispatched
+          fi
