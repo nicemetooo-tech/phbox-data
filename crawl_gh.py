@@ -28,7 +28,7 @@ def git_push(msg):
     run=lambda c: subprocess.run(c, shell=True, capture_output=True)
     run('git config user.name phbox-bot')
     run('git config user.email bot@users.noreply.github.com')
-    run('git add data.json progress.json')
+    run('git add data.json progress.json fail.json || true')
     run(f'git commit -m "{msg}"')
     r=run('git pull --rebase origin main && git push')
     print('push', r.returncode, flush=True)
