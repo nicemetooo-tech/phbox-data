@@ -143,6 +143,10 @@ def main():
         print('stopped at MAXREQ')
     finally:
         save(DATA,data); save(PROG,prog); save('fail.json',fail); git_push('final')
+        total_jobs=len(TYPES)*len(AREAS)+len(TVFORMS)*len(AREAS)
+        remaining=max(0,total_jobs-len(done))
+        open('remaining.txt','w').write(str(remaining))
+        print('remaining',remaining,'done',len(done),'of',total_jobs)
         print('items', sum(len(v) for v in data['items'].values()), 'combos', len(data['items']), 'done', len(done))
 
 if __name__=='__main__': main()
