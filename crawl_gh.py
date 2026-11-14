@@ -39,15 +39,18 @@ def get(path, params):
     if req>=MAXREQ: raise SystemExit('limit')
     url=f'https://m.douban.com/rexxar/api/v2/{path}?'+urllib.parse.urlencode(params)
     r=urllib.request.Request(url, headers={'User-Agent':UA,'Referer':'https://m.douban.com/'})
-    for _ in range(3):
+    wait=60
+    for attempt in range(3):
         try:
             d=json.loads(urllib.request.urlopen(r,timeout=25).read()); req+=1
             time.sleep(GAP+random.random()*2)
-            return d
+            return d, None
         except Exception as e:
-            time.sleep(60)
+            msg=str(e)[:60]
+            print(f'retry {path} attempt={attempt+1} wait={wait}s err={msg}', flush=True)
+            time.sleep(wait); wait*=2
     req+=1
-    return None
+    return None, 'fail'
 
 def parse(items):
     out=[]
@@ -62,23 +65,26 @@ def parse(items):
 def recent(path,cat,typ,maxitems=500):
     out=[]; start=0; total=None
     while len(out)<maxitems:
-        d=get(f'subject/recent_hot/{path}', {'start':str(start),'limit':'20','category':cat,'type':typ,'ck':CK})
+        d,err=get(f'subject/recent_hot/{path}', {'start':str(start),'limit':'20','category':cat,'type':typ,'ck':CK})
+        if err: return out, 'fail'
         if not d: break
         if total is None: total=d.get('total',0)
         items=d.get('items') or []
         if not items: break
         out+=parse(items); start+=20
         if total and start>=total: break
-    return out
+    return out, None
 
 def recommend(path,tags,sel):
-    d=get(f'{path}/recommend', {'refresh':'0','start':'0','count':'20','uncollect':'false','score_range':'0,10',
+    d,err=get(f'{path}/recommend', {'refresh':'0','start':'0','count':'20','uncollect':'false','score_range':'0,10',
         'selected_categories':json.dumps(sel,ensure_ascii=False),'tags':tags,'ck':CK})
-    return parse(d.get('items') if d else [])
+    if err: return [], 'fail'
+    return parse(d.get('items') if d else []), None
 
 def main():
     data=load(DATA, {'version':2,'classes':[],'items':{}})
     prog=load(PROG, {'done':{}})
+    fail=load('fail.json', {})
     done=prog['done']
     data['classes']=[
       {'id':'hot_movie','name':'热播电影','filters':[{'key':'rank','name':'排序','values':RANKS},{'key':'area','name':'地区','values':HOT_AREAS}]},
@@ -91,16 +97,19 @@ def main():
         # 热播三页：每次刷新（15 请求）
         for area in HOT_AREAS:
             typ='全部' if area=='全部' else area
-            items=recent('movie','热门',typ)
+            items,err=recent('movie','热门',typ)
+            if err: fail['hot_movie|'+area]=int(time.time())
             if items:
                 data['items'][f'hot_movie|热门|{area}']=items
                 data['items'][f'hot_movie|最新|{area}']=sorted(items,key=lambda x:x['y'] or '0',reverse=True)
                 data['items'][f'hot_movie|豆瓣高分|{area}']=sorted(items,key=lambda x:(float(x['r']) if x['r'] else 0),reverse=True)
         for name,typ in HOT_TV:
-            items=recent('tv','tv',typ)
+            items,err=recent('tv','tv',typ)
+            if err: fail['hot_tv|'+name]=int(time.time())
             if items: data['items'][f'hot_tv|{name}']=items
         for name,typ in HOT_SHOW:
-            items=recent('tv','show',typ)
+            items,err=recent('tv','show',typ)
+            if err: fail['hot_show|'+name]=int(time.time())
             if items: data['items'][f'hot_show|{name}']=items
 
         if SCOPE=='matrix':
@@ -109,9 +118,11 @@ def main():
                     key=f'movie_all|{g}|{a}'
                     if key in done: continue
                     tags=g if a=='全部' else f'{g},{a}'
-                    items=recommend('movie', tags, {'类型':g,'地区':'' if a=='全部' else a})
-                    if items:
-                        data['items'][key]=items
+                    items,err=recommend('movie', tags, {'类型':g,'地区':'' if a=='全部' else a})
+                    if err or not items:
+                        fail[key]=int(time.time()); save('fail.json',fail); continue
+                    data['items'][key]=items
+                    fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
@@ -120,16 +131,18 @@ def main():
                     key=f'tv_all|{f}|{a}'
                     if key in done: continue
                     tags=f if a=='全部' else f'{f},{a}'
-                    items=recommend('tv', tags, {'类型':'','形式':f,'地区':'' if a=='全部' else a})
-                    if items:
-                        data['items'][key]=items
+                    items,err=recommend('tv', tags, {'类型':'','形式':f,'地区':'' if a=='全部' else a})
+                    if err or not items:
+                        fail[key]=int(time.time()); save('fail.json',fail); continue
+                    data['items'][key]=items
+                    fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
     except SystemExit:
         print('stopped at MAXREQ')
     finally:
-        save(DATA,data); save(PROG,prog); git_push('final')
+        save(DATA,data); save(PROG,prog); save('fail.json',fail); git_push('final')
         print('items', sum(len(v) for v in data['items'].values()), 'combos', len(data['items']), 'done', len(done))
 
 if __name__=='__main__': main()
