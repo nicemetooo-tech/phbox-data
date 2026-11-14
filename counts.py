@@ -48,18 +48,20 @@ def main():
     for g in SHOWGENRES: jobs.append((f'tv|show|{g}', lambda g=g: tv_total(f'{g},综艺',{'类型':g,'形式':'综艺'})))
     for a in AREAS: jobs.append((f'tv|area|{a}', lambda a=a: tv_total(f',{a}',{'类型':'','地区':a})))
     for p in PLATFORMS: jobs.append((f'tv|platform|{p}', lambda p=p: tv_total(f',{p}',{'类型':'','地区':''})))
-    changed=0
+    changed={}
     for key, fn in jobs:
         t=fn()
         out[key]={'total': t, 'at': now}
         prev=(old.get(key) or {}).get('total')
-        if prev is not None and t is not None and t!=prev: changed+=1
-        print(key, prev, '->', t, flush=True)
+        if prev is not None and t is not None and t!=prev:
+            changed[key]={'old': prev, 'new': t, 'at': now}
+            print(key, prev, '->', t, flush=True)
     json.dump(out, open(OUT,'w'), ensure_ascii=False, indent=0)
-    print('done jobs', len(jobs), 'changed', changed)
+    json.dump(changed, open('changes.json','w'), ensure_ascii=False, indent=0)
+    print('done jobs', len(jobs), 'changed', len(changed))
     if os.environ.get('GIT_COMMIT')=='1':
         run=lambda c: subprocess.run(c,shell=True,capture_output=True)
         run('git config user.name phbox-bot'); run('git config user.email bot@users.noreply.github.com')
-        run('git add counts.json || true'); run('git commit -m "counts"'); run('git push')
+        run('git add counts.json changes.json || true'); run('git commit -m "counts"'); run('git push')
 
 if __name__=='__main__': main()
