@@ -2,13 +2,13 @@ import os, json, time, random, urllib.request, urllib.parse, subprocess
 
 UA='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
 CK='hyqv'
-GAP=float(os.environ.get('GAP','10'))
-MAXREQ=int(os.environ.get('MAXREQ','300'))
+GAP=float(os.environ.get('GAP','6'))
+MAXREQ=int(os.environ.get('MAXREQ','200'))
 SCOPE=os.environ.get('SCOPE','matrix')
 DATA='data.json'; PROG='progress.json'
 
 TYPES=['喜剧','爱情','动作','科幻','动画','悬疑','犯罪','惊悚','冒险','音乐','历史','奇幻','恐怖','战争','传记','歌舞','武侠','灾难','西部','纪录片','短片']
-AREAS=['全部','华语','欧美','韩国','日本','中国大陆','美国','中国香港','中国台湾','英国','法国','德国','意大利','西班牙','印度','泰国','俄罗斯','加拿大','澳大利亚','爱尔兰','瑞典','巴西','丹麦']
+AREAS=['全部','华语','欧美','中国大陆','美国','日本','韩国','中国香港','中国台湾','英国','法国','德国','意大利','西班牙','印度','泰国','俄罗斯','加拿大','澳大利亚','爱尔兰','瑞典','巴西','丹麦']
 TVFORMS=['电视剧','综艺']
 PLATFORMS=['全部','腾讯视频','爱奇艺','优酷','湖南卫视','Netflix','HBO','BBC','NHK','CBS','NBC','tvN']
 HOT_AREAS=['全部','华语','欧美','韩国','日本']
@@ -53,8 +53,11 @@ def get(path, params):
     return None, 'fail'
 
 def parse(items):
-    out=[]
+    out=[]; seen=set()
     for it in items or []:
+        key=it.get('id') or it.get('title')
+        if key in seen: continue
+        seen.add(key)
         sub=(it.get('card_subtitle') or '').split(' / ')
         out.append({'n':it.get('title',''),'r':str((it.get('rating') or {}).get('value','') or ''),
                     'p':(it.get('pic') or {}).get('normal',''),
@@ -115,6 +118,7 @@ def main():
         if SCOPE=='matrix':
             for g in TYPES:
                 for a in AREAS:
+                    if a=='全部': continue
                     key=f'movie_all|{g}|{a}'
                     if key in done: continue
                     tags=g if a=='全部' else f'{g},{a}'
@@ -128,6 +132,7 @@ def main():
                     if len(done)%50==0: git_push(f'partial {len(done)}')
             for f in TVFORMS:
                 for a in AREAS:
+                    if a=='全部': continue
                     key=f'tv_all|{f}|{a}'
                     if key in done: continue
                     tags=f if a=='全部' else f'{f},{a}'
