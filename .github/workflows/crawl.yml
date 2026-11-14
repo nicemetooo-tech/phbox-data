@@ -3,17 +3,18 @@ on:
   workflow_dispatch:
     inputs:
       scope: {description: 'hot / pool / all', required: true, default: 'pool'}
-      gap: {description: '请求间隔秒', required: false, default: '6'}
-      maxreq: {description: '每次最大请求数', required: false, default: '200'}
+      gap: {description: '请求间隔秒', required: false, default: '7'}
+      maxreq: {description: '每批最大请求数', required: false, default: '150'}
+      pages: {description: '每子项页数', required: false, default: '2'}
   schedule:
-    - cron: '30 18 * * *'
+    - cron: '5 * * * *'
 permissions:
   contents: write
   actions: write
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,9 +22,10 @@ jobs:
       - name: run
         env:
           GIT_COMMIT: '1'
-          SCOPE: ${{ github.event.inputs.scope || 'hot' }}
-          GAP: ${{ github.event.inputs.gap || '6' }}
-          MAXREQ: ${{ github.event.inputs.maxreq || '200' }}
+          SCOPE: ${{ github.event.inputs.scope || 'pool' }}
+          GAP: ${{ github.event.inputs.gap || '7' }}
+          MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
+          PAGES: ${{ github.event.inputs.pages || '2' }}
         run: python pool_gh.py
       - name: commit
         run: |
@@ -31,7 +33,8 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           git add data.json pool_progress.json fail.json remaining.txt || true
           git commit -m "update $(date -u +%FT%TZ)" || echo none
-          git push
+          git pull --rebase origin main || true
+          git push || true
       - name: chain next batch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,10 +42,11 @@ jobs:
           n=$(cat remaining.txt 2>/dev/null || echo 0)
           echo "remaining=$n"
           if [ "$n" -gt 0 ]; then
+            sleep 60
             curl -s -X POST \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches \
-              -d '{"ref":"main","inputs":{"scope":"pool","gap":"6","maxreq":"200"}}'
+              -d '{"ref":"main","inputs":{"scope":"pool","gap":"7","maxreq":"150","pages":"2"}}'
             echo dispatched
           fi
