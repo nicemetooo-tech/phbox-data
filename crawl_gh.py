@@ -49,9 +49,17 @@ def parse(items):
                     'y':sub[0] if sub else '','a':sub[1] if len(sub)>1 else '','g':sub[2] if len(sub)>2 else ''})
     return out
 
-def recent(path,cat,typ):
-    d=get(f'subject/recent_hot/{path}', {'start':'0','limit':'20','category':cat,'type':typ,'ck':CK})
-    return parse(d.get('items') if d else [])
+def recent(path,cat,typ,maxitems=500):
+    out=[]; start=0; total=None
+    while len(out)<maxitems:
+        d=get(f'subject/recent_hot/{path}', {'start':str(start),'limit':'20','category':cat,'type':typ,'ck':CK})
+        if not d: break
+        if total is None: total=d.get('total',0)
+        items=d.get('items') or []
+        if not items: break
+        out+=parse(items); start+=20
+        if total and start>=total: break
+    return out
 
 def recommend(path,tags,sel):
     d=get(f'{path}/recommend', {'refresh':'0','start':'0','count':'20','uncollect':'false','score_range':'0,10',
