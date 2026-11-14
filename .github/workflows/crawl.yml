@@ -2,11 +2,11 @@ name: crawl
 on:
   workflow_dispatch:
     inputs:
-      scope: {description: 'hot 或 matrix', required: true, default: 'hot'}
+      scope: {description: 'hot / pool / all', required: true, default: 'pool'}
       gap: {description: '请求间隔秒', required: false, default: '6'}
       maxreq: {description: '每次最大请求数', required: false, default: '200'}
   schedule:
-    - cron: '10 * * * *'
+    - cron: '30 18 * * *'
 permissions:
   contents: write
   actions: write
@@ -24,15 +24,14 @@ jobs:
           SCOPE: ${{ github.event.inputs.scope || 'hot' }}
           GAP: ${{ github.event.inputs.gap || '6' }}
           MAXREQ: ${{ github.event.inputs.maxreq || '200' }}
-        run: python crawl_gh.py
+        run: python pool_gh.py
       - name: commit
         run: |
           git config user.name "phbox-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data.json progress.json fail.json remaining.txt || true
+          git add data.json pool_progress.json fail.json remaining.txt || true
           git commit -m "update $(date -u +%FT%TZ)" || echo none
           git push
-
       - name: chain next batch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,6 +39,10 @@ jobs:
           n=$(cat remaining.txt 2>/dev/null || echo 0)
           echo "remaining=$n"
           if [ "$n" -gt 0 ]; then
-            curl -s -X POST               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches               -d '{"ref":"main","inputs":{"scope":"matrix","gap":"6","maxreq":"200"}}'
+            curl -s -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches \
+              -d '{"ref":"main","inputs":{"scope":"pool","gap":"6","maxreq":"200"}}'
             echo dispatched
           fi
