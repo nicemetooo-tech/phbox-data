@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       scope: {description: 'hot 或 matrix', required: true, default: 'hot'}
-      gap: {description: '请求间隔秒', required: false, default: '10'}
-      maxreq: {description: '每次最大请求数', required: false, default: '150'}
+      gap: {description: '请求间隔秒', required: false, default: '6'}
+      maxreq: {description: '每次最大请求数', required: false, default: '200'}
   schedule:
     - cron: '10 * * * *'
 permissions:
@@ -22,8 +22,8 @@ jobs:
         env:
           GIT_COMMIT: '1'
           SCOPE: ${{ github.event.inputs.scope || 'hot' }}
-          GAP: ${{ github.event.inputs.gap || '10' }}
-          MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
+          GAP: ${{ github.event.inputs.gap || '6' }}
+          MAXREQ: ${{ github.event.inputs.maxreq || '200' }}
         run: python crawl_gh.py
       - name: commit
         run: |
@@ -40,6 +40,6 @@ jobs:
           n=$(cat remaining.txt 2>/dev/null || echo 0)
           echo "remaining=$n"
           if [ "$n" -gt 0 ]; then
-            curl -s -X POST               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches               -d '{"ref":"main","inputs":{"scope":"matrix","gap":"10","maxreq":"150"}}'
+            curl -s -X POST               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches               -d '{"ref":"main","inputs":{"scope":"matrix","gap":"6","maxreq":"200"}}'
             echo dispatched
           fi
