@@ -164,8 +164,16 @@ def main():
         print('stopped at MAXREQ')
     finally:
         save(DATA,data); save('pool_progress.json',prog); save('fail.json',fail); git_push('pool final')
-        total_jobs=len(TYPES)+len(AREAS)+len(YEARS)+len(TVGENRES)+len(SHOWGENRES)+len(AREAS)+len(PLATFORMS)
-        rem=max(0,total_jobs-len([k for k in done]))
+        all_keys=[]
+        for g in TYPES: all_keys.append(f'movie|genre|{g}|p{PAGES}')
+        for a in AREAS: all_keys.append(f'movie|area|{a}|p{PAGES}')
+        for y in YEARS: all_keys.append(f'movie|year|{y}|p{PAGES}')
+        for g in TVGENRES: all_keys.append(f'tv|genre|{g}|p{PAGES}')
+        for g in SHOWGENRES: all_keys.append(f'tv|show|{g}|p{PAGES}')
+        for a in AREAS: all_keys.append(f'tv|area|{a}|p{PAGES}')
+        for y in YEARS: all_keys.append(f'tv|year|{y}|p{PAGES}')
+        for pl in PLATFORMS: all_keys.append(f'tv|platform|{pl}|p{PAGES}')
+        rem=sum(1 for k in all_keys if k not in done)
         open('remaining.txt','w').write(str(rem))
         print('items',sum(len(v) for v in data['items'].values()),'pool',len(mv),len(tv),'remaining',rem)
 
