@@ -43,11 +43,16 @@ jobs:
       - name: chain next batch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PAGES: ${{ github.event.inputs.pages || '2' }}
         run: |
           n=$(cat remaining.txt 2>/dev/null || echo 0)
-          echo "remaining=$n"
+          echo "remaining=$n pages=$NEXT_PAGES"
           if [ "$n" -gt 0 ]; then
             sleep 30
-            curl -s -X POST               -H "Authorization: Bearer $GH_TOKEN"               -H "Accept: application/vnd.github+json"               https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches               -d '{"ref":"main","inputs":{"scope":"pool","gap":"7","maxreq":"150","pages":"2"}}'
+            curl -s -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches \
+              -d "{\"ref\":\"main\",\"inputs\":{\"scope\":\"pool\",\"gap\":\"7\",\"maxreq\":\"150\",\"pages\":\"$NEXT_PAGES\"}}"
             echo dispatched
           fi
