@@ -6,8 +6,6 @@ on:
       gap: {description: '请求间隔秒', required: false, default: '7'}
       maxreq: {description: '每批最大请求数', required: false, default: '150'}
       pages: {description: '每子项页数', required: false, default: '2'}
-  schedule:
-    - cron: '5 * * * *'
 permissions:
   contents: write
   actions: write
@@ -41,18 +39,3 @@ jobs:
             git pull --rebase origin main || true
             git push && break || sleep 10
           done
-      - name: chain next batch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          n=$(cat remaining.txt 2>/dev/null || echo 0)
-          echo "remaining=$n"
-          if [ "$n" -gt 0 ]; then
-            sleep 60
-            curl -s -X POST \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              https://api.github.com/repos/${{ github.repository }}/actions/workflows/crawl.yml/dispatches \
-              -d '{"ref":"main","inputs":{"scope":"pool","gap":"7","maxreq":"150","pages":"2"}}'
-            echo dispatched
-          fi
