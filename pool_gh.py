@@ -118,10 +118,15 @@ def main():
     mv=pools['movie_all']; tv=pools['tv_all']
 
     def job(key, fn):
-        if key in done: return
+        # 组合键：movie|genre|喜剧|p25 → movie|genre|喜剧
+        item_key = key.rsplit('|p', 1)[0] if '|p' in key else key
+        # 已完成且 items 已有数据才跳过；否则重抓并回填 items
+        if key in done and item_key in data.get('items', {}):
+            return
         items,err=fn()
         if err or not items:
             fail[key]=int(time.time()); save('fail.json',fail); return
+        data.setdefault('items', {})[item_key] = items
         merge(mv,items) if key.startswith('movie') else merge(tv,items)
         fail.pop(key,None); done[key]=int(time.time())
         save(DATA,data); save('pool_progress.json',prog)
