@@ -117,16 +117,21 @@ def main():
     pools.setdefault('movie_all',[]); pools.setdefault('tv_all',[])
     mv=pools['movie_all']; tv=pools['tv_all']
 
+    pages_map = data.setdefault('item_pages', {})
+
     def job(key, fn):
         # 组合键：movie|genre|喜剧|p25 → movie|genre|喜剧
         item_key = key.rsplit('|p', 1)[0] if '|p' in key else key
-        # 已完成且 items 已有数据才跳过；否则重抓并回填 items
-        if key in done and item_key in data.get('items', {}):
+        prev = pages_map.get(item_key, 0)
+        # 只有「已完成 且 抓取页数不少于本次」才跳过
+        if key in done and prev >= PAGES:
             return
         items,err=fn()
         if err or not items:
             fail[key]=int(time.time()); save('fail.json',fail); return
-        data.setdefault('items', {})[item_key] = items
+        if PAGES >= prev:
+            data.setdefault('items', {})[item_key] = items
+            pages_map[item_key] = PAGES
         merge(mv,items) if key.startswith('movie') else merge(tv,items)
         fail.pop(key,None); done[key]=int(time.time())
         save(DATA,data); save('pool_progress.json',prog)
@@ -181,7 +186,8 @@ def main():
         for a in AREAS: all_keys.append(f'tv|area|{a}|p{PAGES}')
         for y in YEARS: all_keys.append(f'tv|year|{y}|p{PAGES}')
         for pl in PLATFORMS: all_keys.append(f'tv|platform|{pl}|p{PAGES}')
-        rem=sum(1 for k in all_keys if k not in done)
+        rem=sum(1 for k in all_keys
+                if k not in done or pages_map.get(k.rsplit('|p', 1)[0], 0) < PAGES)
         open('remaining.txt','w').write(str(rem))
         print('items',sum(len(v) for v in data['items'].values()),'pool',len(mv),len(tv),'remaining',rem)
 
