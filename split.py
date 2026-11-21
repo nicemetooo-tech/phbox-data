@@ -11,15 +11,14 @@ def ver(o):
 
 d = load("data.json")
 items = d.get("items", {})
-hot_items = {k: v for k, v in items.items() if k.startswith("hot_")}
-matrix_items = {k: v for k, v in items.items() if not k.startswith("hot_")}
+pools = d.get("pools", {})
 
-hot = {"classes": d.get("classes", []), "items": hot_items}
-matrix = {"items": matrix_items}
-pool = {"pools": d.get("pools", {})}
-for o in (hot, matrix, pool):
-    o["v"] = ver(o)
-    n = sum(len(v) for v in o.get("items", {}).values()) if "items" in o else len(o.get("pools", {}))
-    print("%s entries=%d v=%s" % (list(o.keys())[0], n, o["v"]))
-for name, o in [("hot.json", hot), ("matrix.json", matrix), ("pool.json", pool)]:
-    json.dump(o, open(name, "w"), ensure_ascii=False, separators=(",", ":"))
+hot = {"classes": d.get("classes", []),
+       "items": {k: v for k, v in items.items() if k.startswith("hot_")}}
+big = {"items": {k: v for k, v in items.items() if not k.startswith("hot_")},
+       "pools": {k: v for k, v in pools.items() if k in ("movie_all", "tv_all")}}
+hot["v"] = ver(hot); big["v"] = ver(big)
+json.dump(hot, open("hot.json", "w"), ensure_ascii=False, separators=(",", ":"))
+json.dump(big, open("big.json", "w"), ensure_ascii=False, separators=(",", ":"))
+print("hot items=%d classes=%d" % (sum(len(v) for v in hot["items"].values()), len(hot["classes"])))
+print("big items=%d pools=%s" % (sum(len(v) for v in big["items"].values()), list(big["pools"])))
