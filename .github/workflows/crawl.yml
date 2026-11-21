@@ -1,13 +1,13 @@
 name: crawl
 on:
   schedule:
-    - cron: '30 16 * * 0'   # 每周日 UTC16:30（北京周一 00:30）跑 pool 大库
+    - cron: '30 19 * * *'   # 每天 UTC19:30（北京 03:30）跑大库
   workflow_dispatch:
     inputs:
       scope: {description: 'hot / pool / all', required: true, default: 'pool'}
       gap: {description: '请求间隔秒', required: false, default: '7'}
       maxreq: {description: '每批最大请求数', required: false, default: '150'}
-      pages: {description: '每子项页数', required: false, default: '2'}
+      pages: {description: '每子项页数', required: false, default: '25'}
 permissions:
   contents: write
   actions: write
@@ -28,7 +28,7 @@ jobs:
           SCOPE: ${{ github.event.inputs.scope || 'pool' }}
           GAP: ${{ github.event.inputs.gap || '7' }}
           MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
-          PAGES: ${{ github.event.inputs.pages || '2' }}
+          PAGES: ${{ github.event.inputs.pages || '25' }}
           MAXSECONDS: '2700'
         run: python pool_gh.py
       - name: split
@@ -47,7 +47,7 @@ jobs:
       - name: chain next batch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEXT_PAGES: ${{ github.event.inputs.pages || '2' }}
+          NEXT_PAGES: ${{ github.event.inputs.pages || '25' }}
           NEXT_GAP: ${{ github.event.inputs.gap || '7' }}
           NEXT_MAXREQ: ${{ github.event.inputs.maxreq || '150' }}
         run: |
