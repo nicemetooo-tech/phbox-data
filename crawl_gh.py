@@ -137,7 +137,7 @@ def main():
                     fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
-            write_hot(data)
+                    write_hot(data)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
             for f in TVFORMS:
                 for a in AREAS:
@@ -152,13 +152,13 @@ def main():
                     fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
-            write_hot(data)
+                    write_hot(data)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
     except SystemExit:
         print('stopped at MAXREQ')
     finally:
-        save(DATA,data); save(PROG,prog)
-            write_hot(data); save('fail.json',fail); git_push('final')
+        save(DATA,data); save(PROG,prog); save('fail.json',fail); git_push('final')
+        write_hot(data)
         total_jobs=len(TYPES)*len(AREAS)+len(TVFORMS)*len(AREAS)
         remaining=max(0,total_jobs-len(done))
         open('remaining.txt','w').write(str(remaining))
