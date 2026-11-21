@@ -1,0 +1,33 @@
+name: hot
+on:
+  schedule:
+    - cron: '30 18 * * *'   # UTC18:30 = 北京 02:30
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: hot
+  cancel-in-progress: false
+jobs:
+  hot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: run
+        env:
+          GIT_COMMIT: '1'
+          SCOPE: hot
+          GAP: '6'
+          MAXREQ: '200'
+          MAXSECONDS: '1800'
+        run: python crawl_gh.py
+      - name: commit
+        run: |
+          git config user.name "phbox-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data.json progress.json || true
+          git diff --cached --quiet || git commit -m "hot $(date -u +%F_%H%M)"
+          git push
