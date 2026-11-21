@@ -31,11 +31,13 @@ jobs:
           PAGES: ${{ github.event.inputs.pages || '2' }}
           MAXSECONDS: '2700'
         run: python pool_gh.py
+      - name: split
+        run: python split.py
       - name: commit
         run: |
           git config user.name "phbox-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data.json pool_progress.json fail.json remaining.txt || true
+          git add data.json hot.json pool.json pool_progress.json fail.json remaining.txt || true
           git commit -m "update $(date -u +%FT%TZ)" || echo none
           for i in 1 2 3; do
             git pull --rebase origin main || true
