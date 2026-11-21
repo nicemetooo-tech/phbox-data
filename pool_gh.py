@@ -22,6 +22,15 @@ HOT_SHOW=[('综合','show_hot'),('国内','show_domestic'),('国外','show_forei
 def load(p,d):
     try: return json.load(open(p))
     except Exception: return d
+def write_big(data):
+    import hashlib
+    items = data.get("items", {})
+    pools = data.get("pools", {})
+    o = {"items": {k: v for k, v in items.items() if not k.startswith("hot_")},
+         "pools": {k: v for k, v in pools.items() if k in ("movie_all", "tv_all")}}
+    o["v"] = hashlib.sha1(json.dumps(o, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
+    save("big.json", o)
+
 def save(p,o):
     json.dump(o, open(p,'w'), ensure_ascii=False, separators=(',',':'))
 
@@ -135,6 +144,7 @@ def main():
         merge(mv,items) if key.startswith('movie') else merge(tv,items)
         fail.pop(key,None); done[key]=int(time.time())
         save(DATA,data); save('pool_progress.json',prog)
+            write_hot(data)
         if len(done)%20==0: git_push(f'pool {len(done)}')
 
     today=time.strftime('%Y-%m-%d')
@@ -176,7 +186,8 @@ def main():
     except SystemExit:
         print('stopped early')
     finally:
-        save(DATA,data); save('pool_progress.json',prog); save('fail.json',fail); git_push('pool final')
+        save(DATA,data); save('pool_progress.json',prog)
+            write_hot(data); save('fail.json',fail); git_push('pool final')
         all_keys=[]
         for g in TYPES: all_keys.append(f'movie|genre|{g}|p{PAGES}')
         for a in AREAS: all_keys.append(f'movie|area|{a}|p{PAGES}')
