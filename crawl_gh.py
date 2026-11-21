@@ -20,6 +20,14 @@ def load(path, default):
     try: return json.load(open(path))
     except Exception: return default
 
+def write_hot(data):
+    import hashlib
+    items = data.get("items", {})
+    o = {"classes": data.get("classes", []),
+         "items": {k: v for k, v in items.items() if k.startswith("hot_")}}
+    o["v"] = hashlib.sha1(json.dumps(o, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
+    save("hot.json", o)
+
 def save(path, obj):
     json.dump(obj, open(path,'w'), ensure_ascii=False, separators=(',',':'))
 
@@ -129,6 +137,7 @@ def main():
                     fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
+            write_hot(data)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
             for f in TVFORMS:
                 for a in AREAS:
@@ -143,11 +152,13 @@ def main():
                     fail.pop(key,None)
                     done[key]=int(time.time())
                     save(DATA,data); save(PROG,prog)
+            write_hot(data)
                     if len(done)%50==0: git_push(f'partial {len(done)}')
     except SystemExit:
         print('stopped at MAXREQ')
     finally:
-        save(DATA,data); save(PROG,prog); save('fail.json',fail); git_push('final')
+        save(DATA,data); save(PROG,prog)
+            write_hot(data); save('fail.json',fail); git_push('final')
         total_jobs=len(TYPES)*len(AREAS)+len(TVFORMS)*len(AREAS)
         remaining=max(0,total_jobs-len(done))
         open('remaining.txt','w').write(str(remaining))
