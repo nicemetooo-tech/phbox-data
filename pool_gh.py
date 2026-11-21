@@ -144,7 +144,7 @@ def main():
         merge(mv,items) if key.startswith('movie') else merge(tv,items)
         fail.pop(key,None); done[key]=int(time.time())
         save(DATA,data); save('pool_progress.json',prog)
-            write_hot(data)
+        write_big(data)
         if len(done)%20==0: git_push(f'pool {len(done)}')
 
     today=time.strftime('%Y-%m-%d')
@@ -186,8 +186,8 @@ def main():
     except SystemExit:
         print('stopped early')
     finally:
-        save(DATA,data); save('pool_progress.json',prog)
-            write_hot(data); save('fail.json',fail); git_push('pool final')
+        save(DATA,data); save('pool_progress.json',prog); save('fail.json',fail); git_push('pool final')
+        write_big(data)
         all_keys=[]
         for g in TYPES: all_keys.append(f'movie|genre|{g}|p{PAGES}')
         for a in AREAS: all_keys.append(f'movie|area|{a}|p{PAGES}')
