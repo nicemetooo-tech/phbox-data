@@ -1,5 +1,7 @@
 name: crawl
 on:
+  schedule:
+    - cron: '30 16 * * 0'   # 每周日 UTC16:30（北京周一 00:30）跑 pool 大库
   workflow_dispatch:
     inputs:
       scope: {description: 'hot / pool / all', required: true, default: 'pool'}
